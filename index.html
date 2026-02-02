@@ -8,57 +8,46 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-      body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F6F6F4; margin: 0; }
+      body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F6F6F4; margin: 0; overflow-x: hidden; }
       #loader-overlay {
         position: fixed; inset: 0; background: #F6F6F4; display: flex;
         flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
+        transition: opacity 0.5s ease;
       }
       .spin {
         width: 32px; height: 32px; border: 3px solid #355C7D; border-top-color: transparent;
         border-radius: 50%; animation: rot 1s linear infinite;
       }
       @keyframes rot { to { transform: rotate(360deg); } }
-      #emergency-btn {
-        display: none; margin-top: 20px; padding: 10px 20px; background: white;
-        border: 2px solid #ddd; border-radius: 12px; font-size: 11px; font-weight: 800;
-        cursor: pointer; color: #666;
+      #error-report {
+        display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        background: white; padding: 15px 25px; border-radius: 15px; border: 2px solid #ff000033;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 10000; text-align: center; max-width: 90%;
       }
     </style>
-    <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@19.0.0",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "lucide-react": "https://esm.sh/lucide-react@0.454.0",
-    "@google/genai": "https://esm.sh/@google/genai@0.21.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/"
-  }
-}
-</script>
+    <!-- Proteção contra erros de referência global -->
+    <script>
+      window.process = { env: { NODE_ENV: 'production' } };
+      window.onerror = function(msg, url, lineNo, columnNo, error) {
+        console.error('Falha de Carregamento:', msg);
+        const report = document.getElementById('error-report');
+        if (report) { report.style.display = 'block'; report.innerHTML = `<p style="color:red; font-size:11px; font-weight:bold;">Erro: ${msg}</p><button onclick="localStorage.clear(); window.location.reload();" style="margin-top:8px; font-size:10px; padding:5px 12px; background:#355C7D; color:white; border-radius:8px; border:none; cursor:pointer; font-weight:bold;">LIMPAR E REINICIAR</button>`; }
+        return false;
+      };
+    </script>
+
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="loader-overlay">
       <div class="spin"></div>
-      <p style="margin-top: 15px; font-size: 10px; font-weight: 900; color: #355C7D; letter-spacing: 0.2em;">INICIANDO ESTÚDIO</p>
-      <button id="emergency-btn" onclick="localStorage.clear(); window.location.reload();">RESETAR CACHE DO APP</button>
+      <p style="margin-top: 15px; font-size: 10px; font-weight: 900; color: #355C7D; letter-spacing: 0.2em;">CARREGANDO SISTEMA</p>
     </div>
 
+    <div id="error-report"></div>
     <div id="root"></div>
 
-    <script>
-      // Se o loader não sumir em 5 segundos, mostra o botão de reset
-      setTimeout(() => {
-        document.getElementById('emergency-btn').style.display = 'block';
-      }, 5000);
 
-      window.addEventListener('load', () => {
-        console.log("Página carregada totalmente");
-      });
-    </script>
-
-    <script type="module" src="./index.tsx"></script>
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>

@@ -3,31 +3,26 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 
-console.log("Executando index.tsx...");
+console.log("Lily Studio: Iniciando componentes...");
 
 const container = document.getElementById('root');
+const loader = document.getElementById('loader-overlay');
 
 if (container) {
   try {
     const root = createRoot(container);
-    root.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    );
+    root.render(<App />);
     
-    // Remove o loader assim que o React montar
-    const loader = document.getElementById('loader-overlay');
-    if (loader) {
-      setTimeout(() => {
+    // Oculta o loader após um curto delay para garantir que o React começou a renderizar
+    setTimeout(() => {
+      if (loader) {
         loader.style.opacity = '0';
         setTimeout(() => loader.remove(), 500);
-      }, 300);
-    }
-    
-    console.log("Lily Studio montado com sucesso.");
-  } catch (e) {
-    console.error("Erro fatal na renderização:", e);
-    alert("Erro ao iniciar o app. Por favor, clique em 'Resetar Cache' na tela.");
+      }
+    }, 1500);
+
+    console.log("Lily Studio: Sistema pronto.");
+  } catch (err) {
+    console.error("Lily Studio: Erro crítico:", err);
   }
 }
