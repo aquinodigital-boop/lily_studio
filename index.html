@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lily Studio 🎨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F6F6F4; margin: 0; }
+      #loader-overlay {
+        position: fixed; inset: 0; background: #F6F6F4; display: flex;
+        flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
+      }
+      .spin {
+        width: 32px; height: 32px; border: 3px solid #355C7D; border-top-color: transparent;
+        border-radius: 50%; animation: rot 1s linear infinite;
+      }
+      @keyframes rot { to { transform: rotate(360deg); } }
+      #emergency-btn {
+        display: none; margin-top: 20px; padding: 10px 20px; background: white;
+        border: 2px solid #ddd; border-radius: 12px; font-size: 11px; font-weight: 800;
+        cursor: pointer; color: #666;
+      }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.454.0",
+    "@google/genai": "https://esm.sh/@google/genai@0.21.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="loader-overlay">
+      <div class="spin"></div>
+      <p style="margin-top: 15px; font-size: 10px; font-weight: 900; color: #355C7D; letter-spacing: 0.2em;">INICIANDO ESTÚDIO</p>
+      <button id="emergency-btn" onclick="localStorage.clear(); window.location.reload();">RESETAR CACHE DO APP</button>
+    </div>
+
+    <div id="root"></div>
+
+    <script>
+      // Se o loader não sumir em 5 segundos, mostra o botão de reset
+      setTimeout(() => {
+        document.getElementById('emergency-btn').style.display = 'block';
+      }, 5000);
+
+      window.addEventListener('load', () => {
+        console.log("Página carregada totalmente");
+      });
+    </script>
+
+    <script type="module" src="./index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
