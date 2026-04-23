@@ -1,6 +1,43 @@
 
 import { GoogleGenAI } from "@google/genai";
-import { AppConfig, ModelType } from "../types";
+import { AppConfig, ModelType, AspectRatio } from "../types";
+
+const FORMAT_MAP: Record<string, { apiRatio: string; targetSize?: { width: number; height: number } }> = {
+  [AspectRatio.VERTICAL]: { apiRatio: '9:16' },
+  [AspectRatio.HORIZONTAL]: { apiRatio: '16:9' },
+  [AspectRatio.SQUARE]: { apiRatio: '1:1' },
+  [AspectRatio.BANNER_DESKTOP]: { apiRatio: '21:9', targetSize: { width: 1920, height: 400 } },
+  [AspectRatio.BANNER_MOBILE]: { apiRatio: '3:2', targetSize: { width: 600, height: 400 } },
+};
+
+const resizeToExactPixels = (dataUrl: string, width: number, height: number): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return reject(new Error('Canvas não suportado'));
+
+      // Cover: preenche todo o canvas mantendo proporção e cortando o excedente
+      const srcRatio = img.width / img.height;
+      const dstRatio = width / height;
+      let sx = 0, sy = 0, sw = img.width, sh = img.height;
+      if (srcRatio > dstRatio) {
+        sw = img.height * dstRatio;
+        sx = (img.width - sw) / 2;
+      } else {
+        sh = img.width / dstRatio;
+        sy = (img.height - sh) / 2;
+      }
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = () => reject(new Error('Falha ao carregar imagem para redimensionar'));
+    img.src = dataUrl;
+  });
+};
 
 export const generateImage = async (
   config: AppConfig,
@@ -52,6 +89,7 @@ export const generateImage = async (
   parts.push({ text: finalPrompt });
 
   // 4. Execução da Geração
+  const format = FORMAT_MAP[config.aspectRatio] ?? { apiRatio: config.aspectRatio };
   try {
     const response = await ai.models.generateContent({
       model: config.model,
@@ -59,7 +97,7 @@ export const generateImage = async (
       config: {
         seed: config.seed,
         imageConfig: {
-          aspectRatio: config.aspectRatio,
+          aspectRatio: format.apiRatio,
           ...(config.model === ModelType.PRO ? { imageSize: '1K' } : {})
         },
         ...(config.model === ModelType.PRO ? { tools: [{ google_search: {} }] } : {})
@@ -69,7 +107,11 @@ export const generateImage = async (
     if (response.candidates && response.candidates[0]?.content?.parts) {
       const imagePart = response.candidates[0].content.parts.find(p => p.inlineData);
       if (imagePart?.inlineData) {
-        return `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`;
+        const dataUrl = `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`;
+        if (format.targetSize) {
+          return await resizeToExactPixels(dataUrl, format.targetSize.width, format.targetSize.height);
+        }
+        return dataUrl;
       }
     }
     throw new Error("O modelo não devolveu uma imagem. Tente mudar o prompt.");

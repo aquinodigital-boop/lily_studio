@@ -8,6 +8,8 @@ export enum AspectRatio {
   VERTICAL = '9:16',
   HORIZONTAL = '16:9',
   SQUARE = '1:1',
+  BANNER_DESKTOP = '1920x400',
+  BANNER_MOBILE = '600x400',
 }
 
 export interface GeneratedImage {
