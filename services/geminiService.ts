@@ -32,7 +32,7 @@ const resizeToExactPixels = (dataUrl: string, width: number, height: number): Pr
         sy = (img.height - sh) / 2;
       }
       ctx.drawImage(img, sx, sy, sw, sh, 0, 0, width, height);
-      resolve(canvas.toDataURL('image/png'));
+      resolve(canvas.toDataURL('image/jpeg', 0.92));
     };
     img.onerror = () => reject(new Error('Falha ao carregar imagem para redimensionar'));
     img.src = dataUrl;

@@ -65,6 +65,22 @@ const App: React.FC = () => {
     }
   };
 
+  // Grava o histórico no localStorage. Se estourar a quota, descarta os itens
+  // mais antigos até caber, para a UI não mostrar erro ao gerar imagens grandes.
+  const persistHistory = (items: GeneratedImage[]): GeneratedImage[] => {
+    let pruned = items;
+    while (pruned.length > 0) {
+      try {
+        localStorage.setItem('lily_studio_history', JSON.stringify(pruned));
+        return pruned;
+      } catch {
+        pruned = pruned.slice(0, -1);
+      }
+    }
+    try { localStorage.removeItem('lily_studio_history'); } catch { }
+    return [];
+  };
+
   const handlePrimarySelect = (file: File) => {
     setPrimaryImage(file);
     if (primaryPreview) URL.revokeObjectURL(primaryPreview);
@@ -94,8 +110,8 @@ const App: React.FC = () => {
         seed: finalConfig.seed
       };
       const newHistory = [newItem, ...history].slice(0, 20);
-      setHistory(newHistory);
-      localStorage.setItem('lily_studio_history', JSON.stringify(newHistory));
+      const stored = persistHistory(newHistory);
+      setHistory(stored);
     } catch (error: any) {
       setErrorMsg(error.message || "Erro inesperado.");
     } finally {
@@ -146,7 +162,7 @@ const App: React.FC = () => {
 
         <HistoryBar
           history={history}
-          onClear={() => { if (confirm("Limpar histórico?")) setHistory([]); }}
+          onClear={() => { if (confirm("Limpar histórico?")) { setHistory([]); persistHistory([]); } }}
           onOpenGallery={() => setIsGalleryOpen(true)}
           onSelect={(item) => { setGeneratedImage(item.url); setConfig(prev => ({ ...prev, prompt: item.prompt })); }}
         />
@@ -159,7 +175,7 @@ const App: React.FC = () => {
           <FullHistory
             history={history} onClose={() => setIsGalleryOpen(false)}
             onSelect={(item) => { setGeneratedImage(item.url); setConfig(prev => ({ ...prev, prompt: item.prompt })); setIsGalleryOpen(false); }}
-            onDeleteItem={(id) => setHistory(h => h.filter(i => i.id !== id))}
+            onDeleteItem={(id) => setHistory(h => { const next = h.filter(i => i.id !== id); persistHistory(next); return next; })}
           />
         )}
       </div>
