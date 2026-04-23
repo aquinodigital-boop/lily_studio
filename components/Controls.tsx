@@ -86,6 +86,8 @@ const Controls: React.FC<ControlsProps> = ({ config, setConfig, isGenerating, on
             <span className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px]">3</span>
             Formato de Saída
           </label>
+
+          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Redes Sociais</p>
           <div className="grid grid-cols-3 gap-2">
             {[
               { id: AspectRatio.SQUARE, label: 'Feed', sub: 'Quadrado', icon: <Icons.Maximize size={16} /> },
@@ -102,6 +104,27 @@ const Controls: React.FC<ControlsProps> = ({ config, setConfig, isGenerating, on
               >
                 {r.icon}
                 <span className="text-[10px] font-bold">{r.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider pt-1">Banners do Site</p>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { id: AspectRatio.BANNER_DESKTOP, label: 'Desktop', sub: '1920x400', icon: <Icons.Monitor size={16} /> },
+              { id: AspectRatio.BANNER_MOBILE, label: 'Mobile', sub: '600x400', icon: <Icons.Smartphone size={16} /> }
+            ].map((r) => (
+              <button
+                key={r.id}
+                onClick={() => setConfig(prev => ({ ...prev, aspectRatio: r.id }))}
+                className={`py-3 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${config.aspectRatio === r.id
+                  ? 'border-[#355C7D] bg-[#355C7D]/5 text-[#355C7D]'
+                  : 'border-gray-100 text-gray-400 hover:border-gray-200'
+                  }`}
+              >
+                {r.icon}
+                <span className="text-[10px] font-bold">{r.label}</span>
+                <span className="text-[9px] font-medium opacity-70">{r.sub}</span>
               </button>
             ))}
           </div>
