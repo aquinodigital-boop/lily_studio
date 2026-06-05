@@ -114,10 +114,18 @@ export const generateImage = async (
     }
     throw new Error("O modelo não devolveu uma imagem. Tente mudar o prompt.");
   } catch (error: any) {
-    if (error.message?.includes("API key")) {
+    const msg = error?.message || '';
+    const status = error?.status ?? error?.code;
+
+    // Limite do free tier atingido (por minuto ou por dia)
+    if (status === 429 || status === 'RESOURCE_EXHAUSTED' || /\b429\b|RESOURCE_EXHAUSTED|quota|exhausted|rate limit/i.test(msg)) {
+      throw new Error("Limite de gerações atingido no free tier. Aguarde um instante e tente de novo — o limite por minuto reseta em segundos; o diário reseta no dia seguinte.");
+    }
+
+    if (msg.includes("API key")) {
       throw new Error("Chave API inválida ou expirada.");
     }
-    throw new Error(error.message || "Falha na conexão com o servidor de IA.");
+    throw new Error(msg || "Falha na conexão com o servidor de IA.");
   }
 };
 
