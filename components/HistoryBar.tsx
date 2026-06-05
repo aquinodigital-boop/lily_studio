@@ -50,8 +50,8 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ history, onSelect, onClear, onO
                   "{item.prompt}"
                 </p>
                 <div className="flex items-center justify-between mt-1">
-                  <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${item.model.includes('pro') ? 'bg-[#355C7D]/10 text-[#355C7D]' : 'bg-gray-100 text-gray-400'}`}>
-                    {item.model.includes('pro') ? 'PRO' : 'FLASH'}
+                  <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${item.model.includes('gemini-3') ? 'bg-[#355C7D]/10 text-[#355C7D]' : 'bg-gray-100 text-gray-400'}`}>
+                    {item.model.includes('gemini-3') ? 'NANO 2' : 'NANO 1'}
                   </span>
                   <span className="text-[8px] font-bold text-gray-300">{new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>

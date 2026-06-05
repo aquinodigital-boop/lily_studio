@@ -1,6 +1,6 @@
 
 import { GoogleGenAI } from "@google/genai";
-import { AppConfig, ModelType, AspectRatio } from "../types";
+import { AppConfig, AspectRatio } from "../types";
 
 const FORMAT_MAP: Record<string, { apiRatio: string; targetSize?: { width: number; height: number } }> = {
   [AspectRatio.VERTICAL]: { apiRatio: '9:16' },
@@ -98,9 +98,7 @@ export const generateImage = async (
         seed: config.seed,
         imageConfig: {
           aspectRatio: format.apiRatio,
-          ...(config.model === ModelType.PRO ? { imageSize: '1K' } : {})
         },
-        ...(config.model === ModelType.PRO ? { tools: [{ google_search: {} }] } : {})
       },
     });
 

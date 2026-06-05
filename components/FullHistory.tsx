@@ -83,8 +83,8 @@ const FullHistory: React.FC<FullHistoryProps> = ({ history, onClose, onSelect, o
                       <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">
                         {new Date(item.timestamp).toLocaleDateString()}
                       </span>
-                      <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${item.model.includes('pro') ? 'bg-[#355C7D]/10 text-[#355C7D]' : 'bg-gray-100 text-gray-400'}`}>
-                        {item.model.includes('pro') ? 'TURBO' : 'FLASH'}
+                      <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${item.model.includes('gemini-3') ? 'bg-[#355C7D]/10 text-[#355C7D]' : 'bg-gray-100 text-gray-400'}`}>
+                        {item.model.includes('gemini-3') ? 'NANO 2' : 'NANO 1'}
                       </span>
                     </div>
                   </div>
