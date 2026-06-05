@@ -10,6 +10,23 @@ import { DEFAULT_CONFIG } from './constants';
 import { generateImage } from './services/geminiService';
 import { Icons } from './components/Icon';
 
+// Persiste o histórico no localStorage. Como as imagens são data URLs (base64)
+// e podem pesar alguns MB cada, o limite de quota (~5MB) pode estourar. Nesse
+// caso, descartamos as entradas mais antigas e tentamos de novo até caber,
+// preservando sempre as gerações mais recentes.
+const persistHistory = (items: GeneratedImage[]) => {
+  let toSave = [...items];
+  while (toSave.length > 0) {
+    try {
+      localStorage.setItem('lily_studio_history', JSON.stringify(toSave));
+      return;
+    } catch (e) {
+      toSave = toSave.slice(0, -1); // remove a mais antiga e tenta de novo
+    }
+  }
+  try { localStorage.removeItem('lily_studio_history'); } catch {}
+};
+
 const App: React.FC = () => {
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
@@ -95,7 +112,7 @@ const App: React.FC = () => {
       };
       const newHistory = [newItem, ...history].slice(0, 20);
       setHistory(newHistory);
-      localStorage.setItem('lily_studio_history', JSON.stringify(newHistory));
+      persistHistory(newHistory);
     } catch (error: any) {
       setErrorMsg(error.message || "Erro inesperado.");
     } finally {
@@ -146,7 +163,7 @@ const App: React.FC = () => {
 
         <HistoryBar
           history={history}
-          onClear={() => { if (confirm("Limpar histórico?")) setHistory([]); }}
+          onClear={() => { if (confirm("Limpar histórico?")) { setHistory([]); persistHistory([]); } }}
           onOpenGallery={() => setIsGalleryOpen(true)}
           onSelect={(item) => { setGeneratedImage(item.url); setConfig(prev => ({ ...prev, prompt: item.prompt })); }}
         />
@@ -159,7 +176,7 @@ const App: React.FC = () => {
           <FullHistory
             history={history} onClose={() => setIsGalleryOpen(false)}
             onSelect={(item) => { setGeneratedImage(item.url); setConfig(prev => ({ ...prev, prompt: item.prompt })); setIsGalleryOpen(false); }}
-            onDeleteItem={(id) => setHistory(h => h.filter(i => i.id !== id))}
+            onDeleteItem={(id) => setHistory(h => { const next = h.filter(i => i.id !== id); persistHistory(next); return next; })}
           />
         )}
       </div>
