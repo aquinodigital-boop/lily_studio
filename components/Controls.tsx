@@ -53,8 +53,8 @@ const Controls: React.FC<ControlsProps> = ({ config, setConfig, isGenerating, on
           </label>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { id: ModelType.FLASH, label: 'Nano Banana 1', sub: 'Rápido & Simples', icon: <Icons.Zap size={14} /> },
-              { id: ModelType.PRO, label: 'Nano Banana 2', sub: 'Mais Avançado', icon: <Icons.Star size={14} /> }
+              { id: ModelType.FLASH, label: 'Nano Banana 1', sub: 'Grátis & Rápido', icon: <Icons.Zap size={14} /> },
+              { id: ModelType.PRO, label: 'Nano Banana 2', sub: 'Pago • Premium', icon: <Icons.Star size={14} /> }
             ].map((m) => (
               <button
                 key={m.id}
@@ -74,8 +74,8 @@ const Controls: React.FC<ControlsProps> = ({ config, setConfig, isGenerating, on
             ))}
           </div>
           {config.model === ModelType.PRO && (
-            <p className="text-[9px] text-emerald-600 font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-100">
-              * Nano Banana 2 (gemini-3.1-flash-image-preview) roda no free tier da sua chave Gemini.
+            <p className="text-[9px] text-amber-600 font-bold bg-amber-50 p-2 rounded-lg border border-amber-100">
+              * Nano Banana 2 é pago (~$0,05+/imagem) e exige billing ativo na chave Gemini. O Nano Banana 1 é grátis.
             </p>
           )}
         </div>
