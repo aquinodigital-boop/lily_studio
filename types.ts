@@ -1,7 +1,7 @@
 
 export enum ModelType {
   FLASH = 'gemini-2.5-flash-image',          // Nano Banana 1
-  PRO = 'gemini-3.1-flash-image-preview',    // Nano Banana 2 (pago, exige billing)
+  PRO = 'gemini-3-pro-image-preview',        // Nano Banana 2 (pago, exige billing)
 }
 
 export enum AspectRatio {
