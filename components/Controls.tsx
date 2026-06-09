@@ -53,7 +53,7 @@ const Controls: React.FC<ControlsProps> = ({ config, setConfig, isGenerating, on
           </label>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { id: ModelType.FLASH, label: 'Nano Banana 1', sub: 'Grátis & Rápido', icon: <Icons.Zap size={14} /> },
+              { id: ModelType.FLASH, label: 'Nano Banana 1', sub: 'Econômico • Rápido', icon: <Icons.Zap size={14} /> },
               { id: ModelType.PRO, label: 'Nano Banana 2', sub: 'Pago • Premium', icon: <Icons.Star size={14} /> }
             ].map((m) => (
               <button
